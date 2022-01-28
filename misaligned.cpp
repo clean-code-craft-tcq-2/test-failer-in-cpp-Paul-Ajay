@@ -8,8 +8,9 @@ int printColorMap(std::vector<std::string> & colorMap) {
     int i = 0, j = 0;
     for(i = 0; i < 5; i++) {
         for(j = 0; j < 5; j++) {
-            std::cout << i * 5 + j << " | " << majorColor[i] << " | " << minorColor[i] << "\n";
-            colorMap.push_back(std::to_string(i * 5 + j) +  " | " + majorColor[i] +  " | " + minorColor[i]);
+            // std::cout << i * 5 + j << " | " << majorColor[i] << " | " << minorColor[i] << "\n";
+            colorMap.push_back(std::to_string(i * 5 + j) +  " | " + majorColor[i] +  " | " + minorColor[i] + "\n");
+            std::cout << colorMap.back();
         }
     }
     return i * j;
