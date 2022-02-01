@@ -3,37 +3,55 @@
 
 int alertFailureCount = 0;
 
-int networkAlertStub(float celcius, bool isNetworkOk) {
-    std::cout << "ALERT: Temperature is " << celcius << " celcius.\n";
-    // Return 200 for ok
-    // Return 500 for not-ok
-    // stub always succeeds and returns 200
-    if (isNetworkOk) 
-        std::cout << "Network is ok" << std::endl;
-    else {
-        std::cout << "Network is not-ok" << std::endl;
-        return 500;
+class networkAlert
+{
+public:
+    virtual int checkNetworkStatus(bool isNetworkOk) = 0;
+};
+
+class networkAlertStub : public networkAlert
+{
+public:
+    int checkNetworkStatus(bool isNetworkOk) {
+        if (isNetworkOk) {
+            return 200;
+        }
+        else {
+            return 500;
+        }
     }
-    return 200;
+};
+
+class networkAlertImpl : public networkAlert
+{
+public:
+    int checkNetworkStatus(bool isNetworkOk) {
+        return 200;
+    }
+
+};
+
+float convertFarenheitToCelcius(float farenheit) {
+    return ((farenheit - 32) * 5 / 9);
 }
 
-int alertInCelcius(float farenheit, bool isNetworkOk) {
-    float celcius = (farenheit - 32) * 5 / 9;
-    int returnCode = networkAlertStub(celcius, isNetworkOk);
+int alertInCelcius(float farenheit, networkAlert* networkAlertObject, bool isNetworkOk) {
+    float celcius = convertFarenheitToCelcius(farenheit);
+    int returnCode = networkAlertObject->checkNetworkStatus(isNetworkOk);
     if (returnCode != 200) {
-        // non-ok response is not an error! Issues happen in life!
-        // let us keep a count of failures to report
-        // However, this code doesn't count failures!
-        // Add a test below to catch this bug. Alter the stub above, if needed.
-        alertFailureCount += 0;
+        alertFailureCount += 1;
     } 
     return alertFailureCount;
 }
+ 
+int main() {
 
-int main() {  
-    assert(alertInCelcius(400.5, false) != 0);
-    assert(alertInCelcius(303.6, true) == 1);
+    networkAlert * networkAlertStubObject = new networkAlertStub();
+    assert(alertInCelcius(400.5, networkAlertStubObject, false) == 1);
+    assert(alertInCelcius(303.6, networkAlertStubObject, true) == 1);
+    assert(alertInCelcius(303.6, networkAlertStubObject, false) == 2);
     std::cout << alertFailureCount << " alerts failed.\n";
+    assert(alertFailureCount == 2);
     std::cout << "All is well (maybe!)\n";
     return 0;
 }
