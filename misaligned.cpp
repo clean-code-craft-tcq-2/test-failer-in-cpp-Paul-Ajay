@@ -50,7 +50,7 @@ int main() {
     auto colorMapList = colorMapObject.generateColorMap();
     assert(colorMapList.at(0).at(3) == colorMapList.at(10).at(3));
     auto result = colorMapObject.printColorMap(colorMapList);
-    assert(result == majorColor.size() * minorColor.size());
+    assert(result == static_cast<int> (majorColor.size() * minorColor.size()));
     std::cout << "All is well (maybe!)\n";
     return 0;
 }
